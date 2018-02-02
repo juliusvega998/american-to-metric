@@ -2,20 +2,19 @@ const dig_regx = /0*(\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?).*/;
 
 (() => {
 	const regx = [ 
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*inch(?:es)?\b/gi, 		//inch - 0
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:foot|feet)\b/gi, 		//foot - 1
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*mile(?:s)?\b/gi, 			//miles - 2
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*yard(?:s)?\b/gi, 			//yard - 3
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*inch(?:es)?\b/gi,
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:foot|feet)\b/gi,
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*mile(?:s)?\b/gi,
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*yard(?:s)?\b/gi,
 
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:pound(?:s)?|lbs)\b/gi,	//lbs - 4
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*ton(?:s)?\b/gi,			//tons - 5
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:ounce(?:s)?|oz)\b/gi,	//oz - 6
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*gal(?:lon(?:s)?)?\b/gi,	//gallons - 7
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:pound(?:s)?|lbs)\b/gi,
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*ton(?:s)?\b/gi,
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:ounce(?:s)?|oz)\b/gi,
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*gal(?:lon(?:s)?)?\b/gi,
 
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:(?:°)?\s*(?:f|fahrenheit)|degrees)\b/gi	//fahrenheit - 8
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:(?:°)?\s*(?:f|fahrenheit)|degrees)\b/gi
 	];
 
-	//c*1.8 + 32
 	const conversion = {
 		'in2cm': 2.54,
 		'foot2cm': 30.48,
@@ -72,7 +71,7 @@ const dig_regx = /0*(\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?).*/;
 			case !!e.match(regx[6]): converted.push(convert(e, 'oz2ml')); break;
 			case !!e.match(regx[7]): converted.push(convert(e, 'gallons2l')); break;
 			case !!e.match(regx[8]): converted.push(convert(e, 'f2c')); break;
-			default: console.log(e + " does not match to any"); break;
+			default: console.log(e + " does not match to any unit"); break;
 		}
 	});
 
