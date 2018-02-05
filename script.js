@@ -1,6 +1,6 @@
 const dig_regx = /0*(\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?).*/;
 
-(() => {
+$(window).on('load', () => {
 	const regx = [ 
 		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*inch(?:es)?\b/gi,
 		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:foot|feet)\b/gi,
@@ -60,7 +60,7 @@ const dig_regx = /0*(\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?).*/;
 
 	matches = [...new Set(matches)];
 
-	matches.forEach((e, i) => {
+	matches.forEach((e) => {
 		switch(true) {
 			case !!e.match(regx[0]): converted.push(convert(e, 'in2cm')); break;
 			case !!e.match(regx[1]): converted.push(convert(e, 'foot2cm')); break;
@@ -71,9 +71,12 @@ const dig_regx = /0*(\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?).*/;
 			case !!e.match(regx[6]): converted.push(convert(e, 'oz2ml')); break;
 			case !!e.match(regx[7]): converted.push(convert(e, 'gallons2l')); break;
 			case !!e.match(regx[8]): converted.push(convert(e, 'f2c')); break;
-			default: console.log(e + " does not match to any unit"); break;
+			default: console.log(e + " does not match to any unit"); converted.push(''); break;
 		}
 	});
 
-	console.log(converted);
-})();
+	matches.forEach((e, i) => {
+		let text = $('p:contains(\'' + e + '\'), li:contains(\'' + e + '\')').html().replace(e, converted[i]);
+		$('p:contains(\'' + e + '\'), li:contains(\'' + e + '\')').html(text);
+	});
+});
