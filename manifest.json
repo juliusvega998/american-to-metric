@@ -3,7 +3,7 @@
 
 	"name": "American to Metric System Converter",
 	"description": "This extension automatically converts all american units to metric units",
-	"version": "0.0.50",
+	"version": "0.1.32",
 
 	"permissions": [
 		"activeTab"
@@ -12,7 +12,8 @@
 	"content_scripts": [
 		{
 			"matches": ["<all_urls>"],
-			"js": ["jquery-3.3.1.min.js", "script.js"]
+			"css": ["jquery.qtip.min.css"],
+			"js": ["jquery-3.3.1.min.js", "jquery.qtip.min.js", "script.js"]
 		}
 	]
 }

@@ -52,6 +52,7 @@ $(window).on('load', () => {
 	let content = $('body').text();
 	let matches = [];
 	let converted = [];
+	let j = 0;
 
 	regx.forEach((r) => {
 		let temp = content.match(r);
@@ -75,8 +76,23 @@ $(window).on('load', () => {
 		}
 	});
 
-	matches.forEach((e, i) => {
-		let text = $('p:contains(\'' + e + '\'), li:contains(\'' + e + '\')').html().replace(e, converted[i]);
-		$('p:contains(\'' + e + '\'), li:contains(\'' + e + '\')').html(text);
+	matches.forEach((orig, i) => {
+		let elems = $('p:contains(\'' + orig + '\'), li:contains(\'' + orig + '\')').toArray();
+		elems.forEach((e) => {
+			let text = $(e).html().replace(orig, ' <span class=\'a2m-convertable\' id=\'a2m-' + j + '\'>' + converted[i] + '</span>');
+			$(e).html(text);
+
+			$('span#a2m-' + j).qtip({
+				content: {
+					text: orig
+				}
+			});
+
+			j++;
+		});
 	});
+
+	$('span.a2m-convertable').css('text-decoration', 'underline');
+	$('span.a2m-convertable').css('font-style', 'italic');
+	$('span.a2m-convertable').css('margin', '0 1');
 });
