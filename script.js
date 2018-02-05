@@ -12,7 +12,7 @@ $(window).on('load', () => {
 		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:ounce(?:s)?|oz)\b/gi,
 		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*gal(?:lon(?:s)?)?\b/gi,
 
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:(?:°)?\s*(?:f|fahrenheit)|degrees)\b/gi
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:(?:°\s*)?\s*(?:f|fahrenheit)|degrees)\b/gi
 	];
 
 	const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'td', 'span'];
@@ -25,12 +25,18 @@ $(window).on('load', () => {
 		autoHideDelay: 3000
 	});
 
-	const start = () => {
-		findMatches();
+	const start = (mutationsList) => {
+		if(mutationsList) {
+			for(var m of mutationsList) {
+				findMatches(m.target)
+			}
+		} else {
+			findMatches('body');
+		}
 	}
 
-	const findMatches = () => {
-		let content = $('body').text();
+	const findMatches = (target) => {
+		let content = $(target).text();
 
 		regx.forEach((r) => {
 			let temp = content.match(r);
@@ -123,11 +129,22 @@ $(window).on('load', () => {
 		});
 
 		$('span.a2m-convertable').css('text-decoration', 'underline');
-		$('span.a2m-convertable').css('font-style', 'italic');
-		$('span.a2m-convertable').css('margin', '0 1');
+		$('span.a2m-convertable').css('text-decoration-style', 'dotted');
 
 		$.notify(converted.length + ' american units converted to metric!');
+
+		matches = [];
+		converted = [];
 	}
 
+	const createMutationObserver = () => {
+		let config = { childList: true };
+		let node = document.getElementsByTagName('BODY')[0];
+		let observer = new MutationObserver(start);
+
+		observer.observe(node, config);
+	}
+
+	createMutationObserver();
 	start();
 });
