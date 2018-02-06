@@ -1,18 +1,18 @@
-const dig_regx = /0*(\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?).*/;
+const dig_regx = /((?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?).*/;
 
 $(window).on('load', () => {
 	const regx = [ 
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*inch(?:es)\b/gi,
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:foot|feet|ft)\b/gi,
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*mile(?:s)?\b/gi,
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*yard(?:s)?\b/gi,
+		/(?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*inch(?:es)\b/gi,
+		/(?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:foot|feet|ft)\b/gi,
+		/(?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*mile(?:s)?\b/gi,
+		/(?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*yard(?:s)?\b/gi,
 
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:pound(?:s)?|lbs)\b/gi,
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*ton(?:s)?\b/gi,
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:ounce(?:s)?|oz)\b/gi,
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*gal(?:lon(?:s)?)?\b/gi,
+		/(?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:pound(?:s)?|lbs)\b/gi,
+		/(?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*ton(?:s)?\b/gi,
+		/(?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:ounce(?:s)?|oz)\b/gi,
+		/(?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*gal(?:lon(?:s)?)?\b/gi,
 
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:(?:°\s*)?\s*(?:f|fahrenheit)|degrees)\b/gi,
+		/(?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:(?:°\s*)?\s*(?:f|fahrenheit)|degrees)\b/gi,
 
 		/\d+('|’)\d+("|”)?\b/gi
 	];
@@ -21,11 +21,6 @@ $(window).on('load', () => {
 
 	let matches = [];
 	let converted = [];
-
-	$.notify.defaults({
-		className: 'success',
-		autoHideDelay: 3000
-	});
 
 	const start = (mutationsList) => {
 		if(mutationsList) {
@@ -97,16 +92,16 @@ $(window).on('load', () => {
 
 		matches.forEach((e) => {
 			switch(true) {
-				case !!e.match(regx[0]): converted.push(convert(e, 'in2cm')); break;
-				case !!e.match(regx[1]): converted.push(convert(e, 'foot2cm')); break;
-				case !!e.match(regx[2]): converted.push(convert(e, 'miles2km')); break;
-				case !!e.match(regx[3]): converted.push(convert(e, 'yard2m')); break;
-				case !!e.match(regx[4]): converted.push(convert(e, 'lbs2kg')); break;
-				case !!e.match(regx[5]): converted.push(convert(e, 'tons2kg')); break;
-				case !!e.match(regx[6]): converted.push(convert(e, 'oz2ml')); break;
-				case !!e.match(regx[7]): converted.push(convert(e, 'gallons2l')); break;
-				case !!e.match(regx[8]): converted.push(convert(e, 'f2c')); break;
-				case !!e.match(regx[9]): converted.push(convert(e, 'inft2cm')); break;
+				case !!e.match(regx[0]): converted.push(convert(e.replace(/,/g, ""), 'in2cm')); break;
+				case !!e.match(regx[1]): converted.push(convert(e.replace(/,/g, ""), 'foot2cm')); break;
+				case !!e.match(regx[2]): converted.push(convert(e.replace(/,/g, ""), 'miles2km')); break;
+				case !!e.match(regx[3]): converted.push(convert(e.replace(/,/g, ""), 'yard2m')); break;
+				case !!e.match(regx[4]): converted.push(convert(e.replace(/,/g, ""), 'lbs2kg')); break;
+				case !!e.match(regx[5]): converted.push(convert(e.replace(/,/g, ""), 'tons2kg')); break;
+				case !!e.match(regx[6]): converted.push(convert(e.replace(/,/g, ""), 'oz2ml')); break;
+				case !!e.match(regx[7]): converted.push(convert(e.replace(/,/g, ""), 'gallons2l')); break;
+				case !!e.match(regx[8]): converted.push(convert(e.replace(/,/g, ""), 'f2c')); break;
+				case !!e.match(regx[9]): converted.push(convert(e.replace(/,/g, ""), 'inft2cm')); break;
 				default: console.log(e + " does not match to any unit"); converted.push(e); break;
 			}
 		});
