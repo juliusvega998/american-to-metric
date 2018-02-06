@@ -14,7 +14,10 @@ $(window).on('load', () => {
 
 		/(?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:(?:°\s*)?\s*(?:f|fahrenheit)|degrees)\b/gi,
 
+		/(?:\d|,)+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*mph\b/gi,
+
 		/\d+('|’)\d+("|”)?\b/gi
+
 	];
 
 	const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'td', 'span'];
@@ -50,6 +53,7 @@ $(window).on('load', () => {
 			'in2cm': 2.54,
 			'foot2cm': 30.48,
 			'miles2km': 1.60934,
+			'mph2kph': 1.60934,
 			'yards2m': 0.9144,
 			'lbs2kg': 0.453592,
 			'tons2kg': 907.185,
@@ -101,7 +105,8 @@ $(window).on('load', () => {
 				case !!e.match(regx[6]): converted.push(convert(e.replace(/,/g, ""), 'oz2ml')); break;
 				case !!e.match(regx[7]): converted.push(convert(e.replace(/,/g, ""), 'gallons2l')); break;
 				case !!e.match(regx[8]): converted.push(convert(e.replace(/,/g, ""), 'f2c')); break;
-				case !!e.match(regx[9]): converted.push(convert(e.replace(/,/g, ""), 'inft2cm')); break;
+				case !!e.match(regx[9]): converted.push(convert(e.replace(/,/g, ""), 'mph2kph')); break;
+				case !!e.match(regx[10]): converted.push(convert(e.replace(/,/g, ""), 'inft2cm')); break;
 				default: console.log(e + " does not match to any unit"); converted.push(e); break;
 			}
 		});
