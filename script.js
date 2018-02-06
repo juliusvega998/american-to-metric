@@ -2,8 +2,8 @@ const dig_regx = /0*(\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?).*/;
 
 $(window).on('load', () => {
 	const regx = [ 
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*inch(?:es)?\b/gi,
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:foot|feet)\b/gi,
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*inch(?:es)\b/gi,
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:foot|feet|ft)\b/gi,
 		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*mile(?:s)?\b/gi,
 		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*yard(?:s)?\b/gi,
 
@@ -12,7 +12,9 @@ $(window).on('load', () => {
 		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:ounce(?:s)?|oz)\b/gi,
 		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*gal(?:lon(?:s)?)?\b/gi,
 
-		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:(?:°\s*)?\s*(?:f|fahrenheit)|degrees)\b/gi
+		/\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)?\s*(?:(?:°\s*)?\s*(?:f|fahrenheit)|degrees)\b/gi,
+
+		/\d+('|’)\d+("|”)?\b/gi
 	];
 
 	const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'td', 'span'];
@@ -38,7 +40,7 @@ $(window).on('load', () => {
 	const findMatches = (target) => {
 		let content = $(target).text();
 
-		regx.forEach((r) => {
+		regx.forEach((r, i) => {
 			let temp = content.match(r);
 			matches = matches.concat((temp != null)? temp : []);
 		});
@@ -65,6 +67,8 @@ $(window).on('load', () => {
 			let num = dig_regx.exec(str)[1];
 			if(units == 'f2c') {
 				return convert2Celsius(num) + "°C";
+			} else if(units == 'inft2cm') {
+				return convert2cm(str) + " cm";
 			}
 
 			if(num.includes("-")) {
@@ -76,11 +80,19 @@ $(window).on('load', () => {
 		}	
 
 		const convertNumber = (num, units) => {
-			return parseInt(num) * conversion[units]
+			return Math.floor(parseInt(num) * conversion[units] * 100) / 100;
 		}
 
 		const convert2Celsius = (num) => {
 			return Math.floor(((parseInt(num) - 32) * 5 / 9) * 100) / 100;
+		}
+
+		const convert2cm = (str) => {
+			let tok = str.split(/('|’)/g);
+			let ft = parseInt(tok[0]);
+			let inch = parseInt(tok[2]);
+
+			return Math.floor((ft * conversion['foot2cm'] + inch * conversion['in2cm']) * 100) / 100;
 		}
 
 		matches.forEach((e) => {
@@ -94,9 +106,11 @@ $(window).on('load', () => {
 				case !!e.match(regx[6]): converted.push(convert(e, 'oz2ml')); break;
 				case !!e.match(regx[7]): converted.push(convert(e, 'gallons2l')); break;
 				case !!e.match(regx[8]): converted.push(convert(e, 'f2c')); break;
-				default: console.log(e + " does not match to any unit"); converted.push(''); break;
+				case !!e.match(regx[9]): converted.push(convert(e, 'inft2cm')); break;
+				default: console.log(e + " does not match to any unit"); converted.push(e); break;
 			}
 		});
+
 		applyChanges();
 	}
 
@@ -130,8 +144,6 @@ $(window).on('load', () => {
 
 		$('span.a2m-convertable').css('text-decoration', 'underline');
 		$('span.a2m-convertable').css('text-decoration-style', 'dotted');
-
-		$.notify(converted.length + ' american units converted to metric!');
 
 		matches = [];
 		converted = [];
