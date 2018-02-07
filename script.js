@@ -65,16 +65,37 @@ $(window).on('load', () => {
 		const convert = (str, units) => {
 			let num = dig_regx.exec(str)[1];
 			if(units == 'f2c') {
-				return convert2Celsius(num) + "°C";
+				if(num.includes("-")) {
+					let nums = num.split("-");
+					return convert2Celsius(nums[0]) + "-" + convert2Celsius(nums[1]) + "°C";
+				}else {
+					return convert2Celsius(num) + "°C";
+				}
 			} else if(units == 'inft2cm') {
 				return convert2cm(str) + " cm";
 			}
 
 			if(num.includes("-")) {
 				let nums = num.split("-");
-				return convertNumber(nums[0], units) + "-" + convertNumber(nums[1], units) + " " + units.split("2")[1];
+				let small = convertNumber(nums[0], units);
+				let large = convertNumber(nums[1], units);
+				let unit = units.split("2")[1];
+
+				if(units.includes("cm") && small >= 100 && large >= 100) {
+					small = small / 100;
+					large = large / 100;
+					unit = "m"
+				}
+				return small + "-" + large + " " + unit;
 			} else {
-				return convertNumber(num, units) + " " + units.split("2")[1];
+				let converted = cconvertNumber(num, units);
+				let unit = units.split("2")[1];
+
+				if(units.includes("cm") && converted >= 100) {
+					converted = converted / 100;
+					unit = "m"
+				}
+				return converted + " " + unit;
 			}
 		}	
 
