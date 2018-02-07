@@ -64,47 +64,86 @@ $(window).on('load', () => {
 
 		const convert = (str, units) => {
 			let num = dig_regx.exec(str)[1];
+			let isRange = num.includes('-');
+			let unit = units.toLowerCase().split('2')[1];
+
+			let low, high;
+
 			if(units == 'f2c') {
-				if(num.includes("-")) {
-					let nums = num.split("-");
-					return convert2Celsius(nums[0]) + "-" + convert2Celsius(nums[1]) + "°C";
+				unit = '°C';
+				if(isRange) {
+					let nums = num.split('-');
+
+					low = convert2Celsius(nums[0])
+					high = convert2Celsius(nums[1]);
 				}else {
-					return convert2Celsius(num) + "°C";
+					low =  convert2Celsius(num);
 				}
 			} else if(units == 'inft2cm') {
-				return convert2cm(str) + " cm";
-			}
+				unit = 'cm';
+				low = convert2cm(str);
+			} else if(isRange) {
+				let nums = num.split('-');
 
-			if(num.includes("-")) {
-				let nums = num.split("-");
-				let small = convertNumber(nums[0], units);
-				let large = convertNumber(nums[1], units);
-				let unit = units.split("2")[1];
-
-				if(units.includes("cm") && small >= 100 && large >= 100) {
-					small = small / 100;
-					large = large / 100;
-					unit = "m"
-				}
-				return small + "-" + large + " " + unit;
+				low = convertNumber(nums[0], units);
+				high = convertNumber(nums[1], units);
 			} else {
-				let converted = cconvertNumber(num, units);
-				let unit = units.split("2")[1];
+				let converted = convertNumber(num, units);
 
-				if(units.includes("cm") && converted >= 100) {
-					converted = converted / 100;
-					unit = "m"
-				}
-				return converted + " " + unit;
+				low = converted;
 			}
-		}	
+
+			let res = toHigherMetric(low, high, unit);
+
+			if(isRange) {
+				return res.low + '-' + res.high + ' ' + res.unit;
+			} else {
+				return res.low + ' ' + res.unit;
+			}
+		}
+
+		const toHigherMetric = (low, high, unit) => {
+			let res;
+
+			if(low >= 100 && unit == 'cm') {
+				res = reduceNumber(low, high, unit, 100);
+				low = res.low;
+				high = res.high;
+				unit = res.unit;
+			}
+
+			if(low >= 1000 && (unit == 'm' || unit == 'ml')) {
+				res = reduceNumber(low, high, unit, 1000);
+				low = res.low;
+				high = res.high;
+				unit = res.unit;
+			}
+
+			return {
+				low: low,
+				high: high,
+				unit: unit
+			}
+		}
+
+		const reduceNumber = (low, high, unit, factor) => {
+			low = toTwoDecimalPlaces(low / factor);
+			if(high) high = toTwoDecimalPlaces(low / factor);
+			unit = 'm';
+
+			return {
+				low: low,
+				high: high,
+				unit: unit
+			}
+		}
 
 		const convertNumber = (num, units) => {
-			return Math.floor(parseInt(num) * conversion[units] * 100) / 100;
+			return toTwoDecimalPlaces(parseInt(num) * conversion[units]);
 		}
 
 		const convert2Celsius = (num) => {
-			return Math.floor(((parseInt(num) - 32) * 5 / 9) * 100) / 100;
+			return toTwoDecimalPlaces((parseInt(num) - 32) * 5 / 9);
 		}
 
 		const convert2cm = (str) => {
@@ -112,23 +151,27 @@ $(window).on('load', () => {
 			let ft = parseInt(tok[0]);
 			let inch = parseInt(tok[2]);
 
-			return Math.floor((ft * conversion['foot2cm'] + inch * conversion['in2cm']) * 100) / 100;
+			return toTwoDecimalPlaces(ft * conversion['foot2cm'] + inch * conversion['in2cm']);
+		}
+
+		const toTwoDecimalPlaces = (num) => {
+			return Math.floor(num * 100) / 100;
 		}
 
 		matches.forEach((e) => {
 			switch(true) {
-				case !!e.match(regx[0]): converted.push(convert(e.replace(/,/g, ""), 'in2cm')); break;
-				case !!e.match(regx[1]): converted.push(convert(e.replace(/,/g, ""), 'foot2cm')); break;
-				case !!e.match(regx[2]): converted.push(convert(e.replace(/,/g, ""), 'miles2km')); break;
-				case !!e.match(regx[3]): converted.push(convert(e.replace(/,/g, ""), 'yard2m')); break;
-				case !!e.match(regx[4]): converted.push(convert(e.replace(/,/g, ""), 'lbs2kg')); break;
-				case !!e.match(regx[5]): converted.push(convert(e.replace(/,/g, ""), 'tons2kg')); break;
-				case !!e.match(regx[6]): converted.push(convert(e.replace(/,/g, ""), 'oz2ml')); break;
-				case !!e.match(regx[7]): converted.push(convert(e.replace(/,/g, ""), 'gallons2l')); break;
-				case !!e.match(regx[8]): converted.push(convert(e.replace(/,/g, ""), 'f2c')); break;
-				case !!e.match(regx[9]): converted.push(convert(e.replace(/,/g, ""), 'mph2kph')); break;
-				case !!e.match(regx[10]): converted.push(convert(e.replace(/,/g, ""), 'inft2cm')); break;
-				default: console.log(e + " does not match to any unit"); converted.push(e); break;
+				case !!e.match(regx[0]): converted.push(convert(e.replace(/,/g, ''), 'in2cm')); break;
+				case !!e.match(regx[1]): converted.push(convert(e.replace(/,/g, ''), 'foot2cm')); break;
+				case !!e.match(regx[2]): converted.push(convert(e.replace(/,/g, ''), 'miles2km')); break;
+				case !!e.match(regx[3]): converted.push(convert(e.replace(/,/g, ''), 'yard2m')); break;
+				case !!e.match(regx[4]): converted.push(convert(e.replace(/,/g, ''), 'lbs2kg')); break;
+				case !!e.match(regx[5]): converted.push(convert(e.replace(/,/g, ''), 'tons2kg')); break;
+				case !!e.match(regx[6]): converted.push(convert(e.replace(/,/g, ''), 'oz2ml')); break;
+				case !!e.match(regx[7]): converted.push(convert(e.replace(/,/g, ''), 'gallons2l')); break;
+				case !!e.match(regx[8]): converted.push(convert(e.replace(/,/g, ''), 'f2c')); break;
+				case !!e.match(regx[9]): converted.push(convert(e.replace(/,/g, ''), 'mph2kph')); break;
+				case !!e.match(regx[10]): converted.push(convert(e.replace(/,/g, ''), 'inft2cm')); break;
+				default: console.log(e + ' does not match to any unit'); converted.push(e); break;
 			}
 		});
 
@@ -150,7 +193,7 @@ $(window).on('load', () => {
 
 			let elems = $(selector).toArray();
 			elems.forEach((e) => {
-				let text = $(e).html().replace(orig, ' <span class=\'a2m-convertable\' id=\'a2m-' + j + '\'>' + converted[i] + '</span>');
+				let text = $(e).html().replace(orig, ' <span id=\'a2m-' + j + '\'>' + converted[i] + '</span>');
 				$(e).html(text);
 
 				$('span#a2m-' + j).qtip({
@@ -158,13 +201,12 @@ $(window).on('load', () => {
 						text: orig
 					}
 				});
+				$('span#a2m-' + j).css('text-decoration', 'underline');
+				$('span#a2m-' + j).css('text-decoration-style', 'dotted');
 
 				j++;
 			});
 		});
-
-		$('span.a2m-convertable').css('text-decoration', 'underline');
-		$('span.a2m-convertable').css('text-decoration-style', 'dotted');
 
 		matches = [];
 		converted = [];

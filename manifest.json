@@ -2,8 +2,8 @@
 	"manifest_version": 2,
 
 	"name": "American to Metric System Converter",
-	"description": "This extension automatically converts all american units to metric units",
-	"version": "1.2.8",
+	"description": "This extension automatically converts all commonly used american units to their respective metric units",
+	"version": "1.2.21",
 
 	"permissions": [
 		"activeTab"
