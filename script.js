@@ -58,14 +58,14 @@ $(window).on('load', () => {
 			'lbs2kg': 0.453592,
 			'tons2kg': 907.185,
 			'oz2ml': 29.5735,
-			'gallons2l': 3.78541,
+			'gallons2L': 3.78541,
 			'f2c': 1
 		}
 
 		const convert = (str, units) => {
 			let num = dig_regx.exec(str)[1];
 			let isRange = num.includes('-');
-			let unit = units.toLowerCase().split('2')[1];
+			let unit = units.split('2')[1];
 
 			let low, high;
 
@@ -88,9 +88,7 @@ $(window).on('load', () => {
 				low = convertNumber(nums[0], units);
 				high = convertNumber(nums[1], units);
 			} else {
-				let converted = convertNumber(num, units);
-
-				low = converted;
+				low = convertNumber(num, units);
 			}
 
 			let res = toHigherMetric(low, high, unit);
@@ -163,11 +161,11 @@ $(window).on('load', () => {
 				case !!e.match(regx[0]): converted.push(convert(e.replace(/,/g, ''), 'in2cm')); break;
 				case !!e.match(regx[1]): converted.push(convert(e.replace(/,/g, ''), 'foot2cm')); break;
 				case !!e.match(regx[2]): converted.push(convert(e.replace(/,/g, ''), 'miles2km')); break;
-				case !!e.match(regx[3]): converted.push(convert(e.replace(/,/g, ''), 'yard2m')); break;
+				case !!e.match(regx[3]): converted.push(convert(e.replace(/,/g, ''), 'yards2m')); break;
 				case !!e.match(regx[4]): converted.push(convert(e.replace(/,/g, ''), 'lbs2kg')); break;
 				case !!e.match(regx[5]): converted.push(convert(e.replace(/,/g, ''), 'tons2kg')); break;
 				case !!e.match(regx[6]): converted.push(convert(e.replace(/,/g, ''), 'oz2ml')); break;
-				case !!e.match(regx[7]): converted.push(convert(e.replace(/,/g, ''), 'gallons2l')); break;
+				case !!e.match(regx[7]): converted.push(convert(e.replace(/,/g, ''), 'gallons2L')); break;
 				case !!e.match(regx[8]): converted.push(convert(e.replace(/,/g, ''), 'f2c')); break;
 				case !!e.match(regx[9]): converted.push(convert(e.replace(/,/g, ''), 'mph2kph')); break;
 				case !!e.match(regx[10]): converted.push(convert(e.replace(/,/g, ''), 'inft2cm')); break;
